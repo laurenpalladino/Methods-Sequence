@@ -1,0 +1,57 @@
+use "C:\Users\lrpalladino\Downloads\ANES2016 for Assignment 2.dta"
+
+* feeling thermometer for the rich
+
+* clean up data 
+tab V162105
+drop if V162105 >100
+drop if V162105 <0
+tab V162105
+summarize V162105, detail
+
+* clean up data for gender
+tab V161342
+drop if V161342==-9
+
+* break feeling thermometer for the rich up by gender
+by V161342, sort : summarize V162105, detail
+
+* feeling thermometer for the poor
+
+* clean up the data
+drop if V162099 >100
+drop if V162099 <0
+tab V162099
+summarize V162099, detail
+
+* break feeling thermometer for the poor up by gender
+by V161342, sort : summarize V162099, detail
+
+* make a scatter plot, no jitter
+scatter V162105 V162099, ytitle(Feeling Thermometer for the Rich) xtitle(Feeling Thermometer for the Poor)
+
+* smake a scatter plot with jitter
+scatter V162105 V162099, jitter(5) ytitle(Feeling Thermometer for the Rich) xtitle(Feeling Thermometer for the Poor)
+
+* create an education variable with 5 categories
+
+* clean up data for education
+drop if V161270 >89
+drop if V161270 <0
+
+* make new education labels
+gen educ=V161270
+recode educ 1=1 2=1 3=1 4=1 5=1 6=1 7=1 8=1 9=2 10=3 11=3 12=3 13=4 14=5 15=5 16=5
+label define educlabel 1 "Less than HS diploma" 2 "High School Diploma or Equivalent" 3 "Some College" 4 "4 Year Undergraduate Degree" 5 "Graduate Degree"
+label values educ educlabel
+tab educ
+
+* create vote variable with 4 categories
+
+* cleaning data
+tab V1620*
+
+drop if V162031x <0
+drop if V162031x ==1
+
+egen votes = concat(V162031x V162062x), decode p(" ")
